@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getApi,
@@ -17,6 +17,7 @@ const Home = () => {
   const loading = useSelector((state) => state?.counter?.loading);
   const error = useSelector((state) => state?.counter?.error);
   const cartItems = useSelector((state) => state?.counter?.addItems);
+  const filteredItems = useSelector((state) => state.counter.searchItems); 
   const navigate = useNavigate();
 
   const stars = [0, 1, 2, 3, 4];
@@ -24,74 +25,79 @@ const Home = () => {
   const addHandleItem = (item) => {
     setToggleId(item.id);
     const itemInCart = cartItems.find((cartItem) => cartItem.id === item.id);
-
+  
     if (itemInCart) {
       dispatch(incrementItemQuantity(item.id));
     } else {
       dispatch(addItems({ ...item, quantity: 1 }));
-      console.log("end");
     }
-    console.log(cartItems, "crt");
+    
+    // Navigate to "/additems" route after adding the item
     navigate("/additems");
   };
+  
+  useEffect(() => {
+    dispatch(getApi());
+  }, [dispatch]);
 
-  console.log(cartItems, "cartitem");
+ 
+  const itemsToDisplay = filteredItems.length > 0 ? filteredItems : users;
 
   return (
-    <div className="text-center w-full">
-      <div className="text-center">
-        <button
-          onClick={() => dispatch(getApi())}
-          className="bg-cyan-500 px-8 rounded-full py-1 my-5"
-        >
-          Get API
-        </button>
-      </div>
-      {loading && <p>Loading...</p>}
-      {error && <p>Error: {error}</p>}
-      <div className="flex flex-wrap -mx-4">
-        {users && users.length > 0
-          ? users.map((item) => (
-              <div key={item.id} className="w-full sm:w-1/2 lg:w-1/4 p-2">
-                <div className="border border-green-500 p-2 rounded-lg bg-gray-100">
+    <>
+   
+      <div className="text-center w-full mt-14">
+        
+        {error && <p>Error: {error}</p>}
+        <div className="flex flex-wrap">
+          {itemsToDisplay && itemsToDisplay.length > 0 ? (
+            itemsToDisplay.map((item) => (
+              <div key={item.id} className="w-full sm:w-1/2 lg:w-1/4 px-2 py-2">
+                <div className="border border-green-500 pb-2 rounded-lg bg-gray-100">
                   <img
                     src={item.images}
                     className="w-[70%] m-auto"
                     alt={item.title}
                   />
-                  <p>{item.title}</p>
-                  <p>{item.category}</p>
+                  <p className="font-bold text-lg" text-2xl>{item.title}</p>
+                  <p className="font-semibold text-lg text-gray-800">{item.category}</p>
                   <div className="flex justify-evenly">
-                    <p>&#8377;:{item.price}</p>
-                    <p>Off: {item.discountPercentage}%</p>
+                    <p className="text-lg text-gray-800">&#8377;:{item.price}</p>
+                    <p className="text-lg text-gray-800">Off: {item.discountPercentage}%</p>
+                    <p className="text-lg text-gray-800 font-medium line-through">
+                      &#8377;:
+                      {(
+                        (item.price / 100) * item.discountPercentage +
+                        item.price
+                      ).toFixed(3)}
+                    </p>
                   </div>
                   <p className="flex justify-center gap-2 py-2">
                     {stars.map((star) => {
                       if (item.rating >= star + 1) {
                         return (
-                          <span key={star} className="text-green-800">
+                          <span key={star} className="text-green-800 text-lg">
                             <FaStar />
                           </span>
                         );
                       } else if (item.rating >= star + 0.5) {
                         return (
-                          <span key={star} className="text-green-800">
+                          <span key={star} className="text-green-800 text-lg">
                             <FaStarHalfAlt />
                           </span>
                         );
                       } else {
                         return (
-                          <span key={star} className="text-green-800">
+                          <span key={star} className="text-green-800 text-lg">
                             <LuStar />
                           </span>
                         );
                       }
                     })}
                   </p>
-                  <p>{item.brand}</p>
                   <div className="flex justify-evenly items-center">
                     <button
-                      className="bg-gray-500 px-8 rounded-full py-1 my-5"
+                      className="bg-gray-500 rounded-full py-1 my-5 w-[60%] hover:bg-gray-600 text-md"
                       onClick={() => addHandleItem(item)}
                     >
                       Add
@@ -100,11 +106,12 @@ const Home = () => {
                 </div>
               </div>
             ))
-          : !loading && (
-              <p className="text-center w-full">No products available</p>
-            )}
+          ) : !loading ? (
+            <p className="text-center w-full">No items found</p>
+          ) : null}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

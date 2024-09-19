@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { removeItems, incrementItemQuantity } from "../Cards/CardSlice";
+import {
+  removeItems,
+  incrementItemQuantity,
+  add_To_cart,
+} from "../Cards/CardSlice";
 import { Link } from "react-router-dom";
 import { MdOutlineCancel } from "react-icons/md";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { LuStar } from "react-icons/lu";
+import Footer from "./Footer";
 
 const AddItems = () => {
   const [toggle, setToggle] = useState(false);
@@ -18,11 +23,11 @@ const AddItems = () => {
   };
 
   const handleAddItem = (id) => {
-    dispatch(incrementItemQuantity(id)); // Just pass the item id
+    dispatch(incrementItemQuantity(id));
   };
 
   const handleRemoveItem = (id) => {
-    dispatch(removeItems(id)); // Just pass the item id
+    dispatch(removeItems(id));
   };
 
   const totalQuantity = cartItems.reduce(
@@ -34,10 +39,14 @@ const AddItems = () => {
     0
   );
 
+  const handleAddCart = (id) => {
+    dispatch(add_To_cart({ id }));
+  };
+
   return (
-    <div className="">
-      <div className="flex justify-end px-5 fixed top-2 right-3">
-        <MdOutlineCancel className="text-2xl" onClick={() => setToggle(true)} />
+    <div className="mt-16">
+      <div className="flex justify-end px-5 fixed top-2 right-3 mt-14 ">
+        <MdOutlineCancel className="text-3xl" onClick={() => setToggle(true)} />
       </div>
       {toggle ? (
         <div>{/* Add content here if needed */}</div>
@@ -47,17 +56,17 @@ const AddItems = () => {
             cartItems.map((item, index) => (
               <div
                 key={index}
-                className="w-[80%] pl-10 gap-10 m-auto my-2 border-2 border-green-500 p-2 rounded-lg bg-gray-100 flex"
+                className="w-[80%] pl-10 gap-10 m-auto my-2 border-2 border-green-500 p-2 rounded-lg bg-gray-200 flex "
               >
                 <img src={item.images} className="w-[25%]" alt={item.title} />
                 <div className="w-[50%]">
                   <p className="font-bold text-2xl">{item.title}</p>
-                  <p className="font-medium text-xl py-2 text-gray-600">
+                  <p className="font-medium text-xl py-2 text-gray-800">
                     {item.category}
                   </p>
                   <div className="flex justify-between py-2">
                     <p className="text-xl font-medium">
-                      &#8377;:{item.price * item.quantity}
+                      &#8377;:{(item.price * item.quantity).toFixed(3)}
                     </p>
                     <p className="text-xl font-medium">
                       Off: {item.discountPercentage}%
@@ -113,7 +122,9 @@ const AddItems = () => {
                       >
                         -
                       </button>
-                      <p className="text-black">{item.quantity}</p>
+                      <p className="text-black text-xl font-bold pt-1">
+                        {item.quantity}
+                      </p>
                       <button
                         className="w-10 h-10 pb-2 flex items-center justify-center rounded-full text-3xl font-bold text-white bg-black"
                         onClick={() => handleAddItem(item.id)}
@@ -121,6 +132,21 @@ const AddItems = () => {
                         +
                       </button>
                     </div>
+                  </div>
+                  <div className="flex justify-between">
+                    <Link to="/addtocart">
+                      <button
+                        className="bg-gray-400 px-4 rounded-full py-1 my-2"
+                        onClick={() => handleAddCart(item.id)}
+                      >
+                        Add to Cart
+                      </button>
+                    </Link>
+                    <Link to="/buynow">
+                      <button className="bg-gray-400 px-4 rounded-full py-1 my-2">
+                        Buy Now
+                      </button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -132,15 +158,8 @@ const AddItems = () => {
           )}
         </>
       )}
-
-      <div className="flex  fixed bottom-0 w-full bg-black items-center justify-center gap-5 py-2">
-        <Link to="/" className=" justify-center ">
-          <button className="px-8 bg-gray-400  py-1 rounded-lg">
-            Continue
-          </button>
-        </Link>
-        <p className="text-white">TotalItems: {totalQuantity}</p>
-        <p className="text-white">&#8377;:{(totalPrice).toFixed(3)}</p>
+      <div>
+        <Footer/>
       </div>
     </div>
   );

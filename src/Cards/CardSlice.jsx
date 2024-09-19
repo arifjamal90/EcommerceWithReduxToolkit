@@ -6,6 +6,13 @@ export const getApi = createAsyncThunk("counter/getApi", async () => {
   return data.products;
 });
 
+
+export const searchApi = createAsyncThunk("counter/searchApi", async (searchItems) => {
+  const response = await fetch(`https://dummyjson.com/products/search?q=${searchItems}`);
+  const data = await response.json();
+  return data.products;
+});
+
 const CardSlice = createSlice({
   name: "counter",
   initialState: {
@@ -13,6 +20,8 @@ const CardSlice = createSlice({
     error: null,
     data: [],
     addItems: [],
+    searchItems: [], 
+    add_cart_items:[],
   },
   reducers: {
     addItems: (state, action) => {
@@ -28,6 +37,7 @@ const CardSlice = createSlice({
     incrementItemQuantity: (state, action) => {
       const itemId = action.payload;
       const itemIndex = state.addItems.findIndex((item) => item.id === itemId);
+      
       if (itemIndex !== -1) {
         state.addItems[itemIndex].quantity += 1;
       }
@@ -41,6 +51,20 @@ const CardSlice = createSlice({
         state.addItems = state.addItems.filter((item) => item.id !== itemId);
       }
     },
+    searchItem: (state, action) => {
+      const searchValue = action.payload.toLowerCase();
+      state.searchItems = state.data.filter((user) =>
+          user.category.toLowerCase().includes(searchValue)
+      );
+    },
+    add_To_cart: (state, action) => {
+      state.add_cart_items=state.searchItems.filter((current)=>{
+        return current.id === action.payload.id 
+      });
+      
+    },
+    
+     
   },
   extraReducers: (builder) => {
     builder
@@ -54,10 +78,21 @@ const CardSlice = createSlice({
       .addCase(getApi.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(searchApi.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(searchApi.fulfilled, (state, action) => {
+        state.loading = false;
+        state.searchItems = action.payload;
+      })
+      .addCase(searchApi.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       });
   },
 });
 
-export const { addItems, removeItems, incrementItemQuantity } =
+export const { addItems, removeItems, incrementItemQuantity, searchItem, add_To_cart } =
   CardSlice.actions;
 export default CardSlice.reducer;
