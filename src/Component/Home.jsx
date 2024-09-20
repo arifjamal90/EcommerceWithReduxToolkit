@@ -5,6 +5,7 @@ import {
   removeItems,
   addItems,
   incrementItemQuantity,
+  searchApi,
 } from "../Cards/CardSlice";
 import { useNavigate } from "react-router-dom";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
@@ -13,7 +14,7 @@ import { LuStar } from "react-icons/lu";
 const Home = () => {
   const [toggleId, setToggleId] = useState(null);
   const dispatch = useDispatch();
-  const users = useSelector((state) => state?.counter?.data);
+  let users = useSelector((state) => state?.counter?.data);
   const loading = useSelector((state) => state?.counter?.loading);
   const error = useSelector((state) => state?.counter?.error);
   const cartItems = useSelector((state) => state?.counter?.addItems);
@@ -38,20 +39,22 @@ const Home = () => {
   
   useEffect(() => {
     dispatch(getApi());
-  }, [dispatch]);
+  }, []);
 
+  console.log(filteredItems, "filter");
  
-  const itemsToDisplay = filteredItems.length > 0 ? filteredItems : users;
+ 
+  //  users = filteredItems.length > 0 ? filteredItems : users;
+console.log(loading);
 
   return (
     <>
-   
       <div className="text-center w-full mt-14">
-        
+        {loading && <p>Loading...</p>}
         {error && <p>Error: {error}</p>}
         <div className="flex flex-wrap">
-          {itemsToDisplay && itemsToDisplay.length > 0 ? (
-            itemsToDisplay.map((item) => (
+          {users && users.length > 0 ? (
+            users.map((item) => (
               <div key={item.id} className="w-full sm:w-1/2 lg:w-1/4 px-2 py-2">
                 <div className="border border-green-500 pb-2 rounded-lg bg-gray-100">
                   <img

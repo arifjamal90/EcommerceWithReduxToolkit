@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { BsCart3 } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
-import { searchItem, searchApi } from '../Cards/CardSlice';
+import { searchItem, searchApi, getApi } from '../Cards/CardSlice';
 import { Link, useParams } from 'react-router-dom';
 
 const Navbar = () => {
-    const { additemsid } = useParams();
+    
     const [search, setSearch] = useState('');
 
     const dispatch = useDispatch();
-    const cartItems = useSelector((state) => state?.counter?.addItems);
-    const fiterItems = useSelector((state) => state.counter?.searchItems);
+    const cartItems = useSelector((state) => state.counter?.addItems);
+    const filterItems = useSelector((state) => state.counter?.searchItems); 
 
     const totalQuantity = cartItems.reduce(
         (total, item) => total + item.quantity,
@@ -18,14 +18,19 @@ const Navbar = () => {
     );
 
     const handleInput = (e) => {
+        e.preventDefault(); 
         const searchValue = e.target.value;
         setSearch(searchValue);
-        dispatch(searchItem(searchValue));
+        searchValue ? dispatch(searchItem(searchValue)) : dispatch(getApi())
+      
+       
     };
 
     useEffect(() => {
-        dispatch(searchApi(fiterItems));
-    }, [dispatch, fiterItems]); // Include fiterItems as a dependency
+        dispatch(searchApi(filterItems)); 
+    }, [search, ]); 
+
+    
 
     return (
         <div className='fixed top-0 w-full right-0 left-0'>

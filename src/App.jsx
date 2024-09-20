@@ -5,8 +5,15 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from './Component/Navbar';
 import BuyNow from './Component/BuyNow';
 import AddToCart from './Component/AddToCart';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { getApi } from './Cards/CardSlice';
 
 function App() {
+  // const dispatch= useDispatch()
+  // useEffect(()=>{
+  //   dispatch(getApi())
+  // })
   return (
     <BrowserRouter>
       <Navbar/>

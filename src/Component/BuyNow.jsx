@@ -3,7 +3,7 @@ import { useFormik } from 'formik';
 import { SignUpSchema } from './Schema/Index';
 import { database } from './Firebase'; 
 import { ref, push } from "firebase/database";
-
+import { Link } from 'react-router-dom';
 const initialValue = {
   fname: '',
   lname: '',
@@ -45,7 +45,7 @@ const BuyNow = () => {
   };
 
   return (
-    <div className='mt-16 w-[40%] m-auto border-2 border-black px-2 rounded-lg'>
+    <div className='mt-16 w-[40%] m-auto border-2 border-black px-2 rounded-lg shadow-xl bg-gray-100'>
       <h1 className='py-3 text-xl font-semibold text-center'>Fill Information</h1>
       <form onSubmit={handleSubmit} className='py-2'>
         <div className='flex justify-between'>
@@ -147,13 +147,16 @@ const BuyNow = () => {
         {errors.mobile && touched.mobile ? (
           <p className="form_error text-danger text-red-700">{errors.mobile}</p>
         ) : null}
-        <div className='text-center pt-2 flex'>
-          <button>Go To Back</button>
+        <div className='text-center pt-2 flex justify-between'>
+        <Link to="/additems">
+          <button  className='border-2 border-black px-4 rounded-lg bg-gray-300 font-semibold py-1'>Go To Back</button>
+          </Link>
           <button
             type="submit"
             className='border-2 border-black px-4 rounded-lg bg-gray-300 font-semibold py-1' >
             Submit
           </button>
+
         </div>
       </form>
     </div>

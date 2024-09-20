@@ -6,9 +6,9 @@ export const SignUpSchema = Yup.object({
   state: Yup.string().min(3).max(25).required('Please enter your State Name'),
   country: Yup.string().min(3).max(25).required('Please enter your Country Name'),
   address: Yup.string().min(10).max(50).required('Please enter your Address Name'),
-  mobile: Yup.number()
+  mobile: Yup.string()
     .matches(/^[0-9]{10}$/, 'Please enter a valid Phone Number')
     .required('Please enter your Phone Number'),
-    zipcode: Yup.number().matches(/^[0-9]{6}$/, 'Please enter a valid zipcode Number')
+    zipcode: Yup.string().matches(/^[0-9]{6}$/, 'Please enter a valid zipcode Number')
     .required('please enter your zipcode Number')
 });

@@ -53,7 +53,7 @@ const CardSlice = createSlice({
     },
     searchItem: (state, action) => {
       const searchValue = action.payload.toLowerCase();
-      state.searchItems = state.data.filter((user) =>
+      state.data = state.data.filter((user) =>
           user.category.toLowerCase().includes(searchValue)
       );
     },
